@@ -1,0 +1,120 @@
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: #6C757D;
+    background-color: #F8F9FA;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.header {
+    background: #4CAFCE;
+    padding: 10px 0;
+}
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.header .logo {
+    font-size: 24px;
+    color: #FFF;
+    font-weight: 700;
+}
+.header .navbar a {
+    color: #FFF;
+    text-decoration: none;
+    margin: 0 10px;
+}
+.header .navbar a:hover {
+    text-decoration: underline;
+}
+
+/* Hero */
+.hero {
+    background: linear-gradient(to right, #4CAFCE, #65B38F);
+    color: #FFF;
+    text-align: center;
+    padding: 50px 0;
+}
+.hero h1 {
+    font-size: 2.5rem;
+}
+.hero p {
+    font-size: 1.2rem;
+}
+.hero-buttons .btn {
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 25px;
+    text-decoration: none;
+    color: #FFF;
+}
+.hero-buttons .btn.primary {
+    background: #65B38F;
+}
+.hero-buttons .btn.secondary {
+    background: #4CAFCE;
+}
+
+/* Features */
+.features {
+    padding: 50px 0;
+}
+.features h2 {
+    text-align: center;
+    color: #4CAFCE;
+}
+.features-grid {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+.feature-card {
+    background: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+.feature-card .icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* Footer */
+.footer {
+    background: #4CAFCE;
+    color: #FFF;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.contact-card {
+    border: 1px solid #ccc;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+  }
+.contact-card-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 16px;
+  }
+.contact-card-info {
+    flex: 1;
+  }
+.contact-card-info h2 {
+    margin: 0 0 8px;
+  }
+.contact-card-info p {
+    margin: 4px 0;
+  }

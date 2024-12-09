@@ -120,6 +120,7 @@
         async function fetchData() {
             try {
                 // this
+                const sensorId = "Device_08:3A:F2:C4:4B:68";
                 const response = await fetch('https://clinclean.onrender.com/api/v1/get_sensor_data', {
                     method: 'GET',
                     headers: {

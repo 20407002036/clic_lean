@@ -1,0 +1,97 @@
+/* Global Styles */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: #6C757D;
+    background-color: #F8F9FA;
+}
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.header {
+    background: #4CAFCE;
+    padding: 10px 0;
+}
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.header .logo {
+    font-size: 24px;
+    color: #FFF;
+    font-weight: 700;
+    text-align: center;
+}
+.header .navbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.header .navbar a {
+    color: #FFF;
+    text-decoration: none;
+    margin: 0 10px;
+}
+.header .navbar a:hover {
+    text-decoration: underline;
+}
+
+/* Registration Section */
+.registration {
+    padding: 50px 20px;
+    background-color: #FFF;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+.registration h1 {
+    text-align: center;
+    color: #4CAFCE;
+    margin-bottom: 20px;
+}
+.registration .form-group {
+    margin-bottom: 15px;
+}
+.registration .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+.registration .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #DDD;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+.registration .btn.primary {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #65B38F;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 16px;
+}
+.registration .btn.primary:hover {
+    background-color: #4CAFCE;
+}
+
+/* Footer */
+.footer {
+    background: #4CAFCE;
+    color: #FFF;
+    text-align: center;
+    padding: 20px 0;
+}

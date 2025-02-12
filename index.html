@@ -29,11 +29,23 @@
             <p>A real-time solution for bedwetting detection and patient monitoring.</p>
             <div class="hero-buttons">
                 <a href="#features" class="btn primary">Learn More</a>
-                <a href="#contact" class="btn secondary">Download Brochure</a>
+                <a href="#contact" onclick="downloadPDF()" class="btn secondary">Download Brochure</a>
                 <a href="reg.html" class="btn primary">Get Started</a>
             </div>
         </div>
     </section>
+
+    <script>
+        function downloadPDF() {
+            // Create an invisible link element
+            const link = document.createElement('a');
+            link.href = '/Cli-Clean.pdf';  // Replace with your PDF file path
+            link.download = 'Cli-clean.pdf';     // This will be the name of the downloaded file
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
 
     <!-- Features Section -->
     <section id="features" class="features">
@@ -43,7 +55,7 @@
                 <div class="feature-card">
                     <div class="icon">🔔</div>
                     <h3>Real-Time Alerts</h3>
-                    <p>Receive alerts within 5 seconds of detection.</p>
+                    <p>Receive alerts convenienlty within 5 seconds of detection.</p>
                 </div>
                 <div class="feature-card">
                     <div class="icon">☁️</div>

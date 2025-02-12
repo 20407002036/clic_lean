@@ -65,14 +65,15 @@
 
 <body>
     <header>
-        <h1>Urine Detector System</h1>
+        <h1>Cli-Clean</h1>
     </header>
 
     <div class="container">
         <div class="data-feed">
             <h2>Live Data Feed</h2>
             <p>status: <span id="status">Loading...</span></p>
-            <p>Timestamp: <span id="timeStamp">Loading...</span></p>
+            <p>Time: <span id="time">Loading...</span></p>
+            <p>Date: <span id="date">Loading...</span></p>
             <p>Device ID: <span id="deviceId">Loading...</span></p>
             <button class="refresh-button" onclick="fetchData('Device_08:3A:F2:C4:4B:68')">Refresh Data</button>
         </div>
@@ -136,12 +137,30 @@
                     const data = await response.json();
 
                     if (data && data.sensor_data && data.device_id) {
+                        const readings = data.sensor_data.Readings;
+                        let latestDate = null;
+                        let latestTime = null;
+                        let latestMoisture = null;
+
+                        for (const date in readings){
+                            for(const time in readings[date]){
+                                const currentDateTime = new Date('${date}T${time}');
+                                if (!latestDate ||currentDateTime > new Date('${latestDate}T${latestTime}')){
+                                    // latestDate = date;
+                                    latestDate = Object.keys(readings).sort().pop();
+                                    latestTime = Object.keys(readings[latestDate]).sort().pop();
+                                    latestMoisture = readings[latestDate][latestTime].moisturelevel;
+                                }
+                            }
+                        }
                         // Update data-feed elements
-                        document.getElementById('timeStamp').innerText = moment(data.sensor_data.timestamp).format('HH:mm:ss DD/MM/YYYY');
+                        document.getElementById('time').innerText =latestTime;
+                        document.getElementById('date').innerText=latestDate;
                         document.getElementById('deviceId').innerText = data.device_id;
-                        if (data.sensor_data.moistureLevel > 600) {
+                        // document.getElementById('status').innerText=latestMoisture;
+                        if (latestMoisture > 600) {
                             document.getElementById('status').innerText = "Dry";
-                        } else if(data.sensor_data.moistureLevel < 600) {
+                        } else if(latestMoisture < 600) {
                             document.getElementById('status').innerText = "Wet";
                             const response = await fetch('https://clinclean.onrender.com/api/v1/send_alert', {
                                 method: 'POST',
@@ -149,7 +168,7 @@
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify({
-                                    sensor_id: data.device_id,
+                                    sensor_id: new String(data.device_id),
                                 })
                             });
 
@@ -175,7 +194,7 @@
             }
 
             // Initial data fetch
-            fetchData('Device_08:3A:F2:C4:4B:68');
+             fetchData('Device_08:3A:F2:C4:4B:68');
         });
     </script>
 </body>

@@ -75,7 +75,7 @@
             <p>Time: <span id="time">Loading...</span></p>
             <p>Date: <span id="date">Loading...</span></p>
             <p>Device ID: <span id="deviceId">Loading...</span></p>
-            <button class="refresh-button" onclick="fetchData('Device_08:3A:F2:C4:4B:68')">Refresh Data</button>
+            <button id="refreshBtn" class="refresh-button">Refresh Data</button>
         </div>
 
         <canvas id="moistureChart"></canvas>
@@ -122,9 +122,10 @@
             });
 
             // Function to fetch data from the API
-            async function fetchData(sensorId) {
+            async function fetchData(sensorId, email) {
                 try {
-                    const response = await fetch(`https://clinclean.onrender.com/api/v1/get_sensor_data?sensor_id=${sensorId}`, {
+                    const query = `sensor_id=${encodeURIComponent(sensorId)}` + (email ? `&user_email=${encodeURIComponent(email)}` : '');
+                    const response = await fetch(`https://clinclean.onrender.com/api/v1/get_sensor_data?${query}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -137,54 +138,49 @@
                     const data = await response.json();
 
                     if (data && data.sensor_data && data.device_id) {
-                        const readings = data.sensor_data.Readings;
+                        const readings = data.sensor_data.Readings || {};
                         let latestDate = null;
                         let latestTime = null;
                         let latestMoisture = null;
 
-                        for (const date in readings){
-                            for(const time in readings[date]){
-                                const currentDateTime = new Date('${date}T${time}');
-                                if (!latestDate ||currentDateTime > new Date('${latestDate}T${latestTime}')){
-                                    // latestDate = date;
-                                    latestDate = Object.keys(readings).sort().pop();
-                                    latestTime = Object.keys(readings[latestDate]).sort().pop();
-                                    latestMoisture = readings[latestDate][latestTime].moisturelevel;
+                        for (const d of Object.keys(readings)) {
+                            for (const t of Object.keys(readings[d])) {
+                                const currentDateTime = new Date(`${d}T${t}`);
+                                const latestDateTime = (latestDate && latestTime) ? new Date(`${latestDate}T${latestTime}`) : null;
+                                if (!latestDateTime || currentDateTime > latestDateTime) {
+                                    latestDate = d;
+                                    latestTime = t;
+                                    latestMoisture = readings[d][t].moisturelevel;
                                 }
                             }
                         }
+
                         // Update data-feed elements
-                        document.getElementById('time').innerText =latestTime;
-                        document.getElementById('date').innerText=latestDate;
-                        document.getElementById('deviceId').innerText = data.device_id;
-                        // document.getElementById('status').innerText=latestMoisture;
-                        if (latestMoisture > 600) {
-                            document.getElementById('status').innerText = "Dry";
-                        } else if(latestMoisture < 600) {
-                            document.getElementById('status').innerText = "Wet";
-                            const response = await fetch('https://clinclean.onrender.com/api/v1/send_alert', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    sensor_id: new String(data.device_id),
-                                })
-                            });
-
-                            if (!response.ok) {
-                                throw new Error('Failed to push data to backend');
+                        if (latestTime) document.getElementById('time').innerText = latestTime;
+                        if (latestDate) document.getElementById('date').innerText = latestDate;
+                        document.getElementById('deviceId').innerText = data.device_id || sensorId;
+                        if (latestMoisture !== null) {
+                            document.getElementById('status').innerText = latestMoisture > 600 ? 'Dry' : 'Wet';
+                            if (latestMoisture < 600) {
+                                const alertRes = await fetch('https://clinclean.onrender.com/api/v1/send_alert', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ sensor_id: String(data.device_id || sensorId) })
+                                });
+                                if (!alertRes.ok) console.warn('Alert push failed:', alertRes.status);
+                                else alert('Alert made successfully!');
                             }
-
-                            alert("Alert made successfully!");
-
                         }
-                        
 
-                        // Update the chart
-                        moistureChart.data.labels.push(data.sensor_data.timestamp);
-                        moistureChart.data.datasets[0].data.push(data.sensor_data.moistureLevel);
-                        moistureChart.update();
+                        // Update the chart with the latest point (if available)
+                        if (latestDate && latestTime && latestMoisture !== null) {
+                            const pointTime = new Date(`${latestDate}T${latestTime}`);
+                            moistureChart.data.labels.push(pointTime);
+                            moistureChart.data.datasets[0].data.push({ x: pointTime, y: latestMoisture });
+                            moistureChart.update();
+                        }
                     } else {
                         console.error("Invalid data format received:", data);
                     }
@@ -193,8 +189,21 @@
                 }
             }
 
+            // read URL params for email and device_id
+            const params = new URLSearchParams(window.location.search);
+            const userEmail = params.get('email') || '';
+            const urlDeviceId = params.get('device_id') || 'Device_08:3A:F2:C4:4B:68';
+
+            // populate deviceId display if available
+            const deviceSpan = document.getElementById('deviceId');
+            if (deviceSpan) deviceSpan.innerText = urlDeviceId;
+
+            // wire up refresh button to use the URL params
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) refreshBtn.addEventListener('click', () => fetchData(urlDeviceId, userEmail));
+
             // Initial data fetch
-             fetchData('Device_08:3A:F2:C4:4B:68');
+            fetchData(urlDeviceId, userEmail);
         });
     </script>
 </body>

@@ -89,8 +89,12 @@
 
                 alert("User registered successfully!");
 
-                // Redirect to home page
-                window.location.href = "home.html";
+                // Redirect to home page with email and device_id as query params
+                const params = new URLSearchParams({
+                    email: email,
+                    device_id: deviceId
+                });
+                window.location.href = `home.html?${params.toString()}`;
             } catch (error) {
                 console.error("Registration error:", error);
                 alert("Registration failed: " + error.message);
